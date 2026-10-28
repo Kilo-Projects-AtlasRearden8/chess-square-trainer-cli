@@ -1,3 +1,8 @@
-__pycache__/
 *.pyc
+.env
+.env.*
+.venv/
+__pycache__/
 chess_stats.json
+dist/*.tmp
+node_modules/
