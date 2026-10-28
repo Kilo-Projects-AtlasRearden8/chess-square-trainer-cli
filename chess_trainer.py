@@ -12,7 +12,6 @@ Run as a module: python -m chess_trainer
 """
 
 import argparse
-import json
 import random
 import sys
 
@@ -250,11 +249,11 @@ def run_stats(args):
             w = int(entry.get("wrong", 0))
             n = c + w
             if n:
-                ranked.append((c / n, n, square))
+                ranked.append((c / n, n, c, square))
         ranked.sort()
         print("\nSquares needing the most work:")
-        for acc, n, square in ranked[: args.worst]:
-            print("  %s: %.0f%% (%d/%d)" % (square, acc * 100, c, n))
+        for acc, n, c, square in ranked[: args.worst]:
+            print("  %s: %.0f%% (%d correct / %d total)" % (square, acc * 100, c, n))
     elif squares:
         print("\nTracked squares: %d" % len(squares))
     return 0

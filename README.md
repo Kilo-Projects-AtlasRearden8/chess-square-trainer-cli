@@ -1,89 +1,126 @@
 # Chess Square Trainer CLI
 
-A small, local-first Python CLI for drilling chess board coordinates and
-square colors, with accuracy tracked in a local JSON file. A fan project
-built by Dylan Asdale for Asdale Dynamics, LLC.
+A small, local-first Python command-line tool for drilling chess board
+coordinates and square colors. Accuracy is tracked in a local JSON file.
 
-No game assets, no accounts, no network, no secrets. Standard library only.
+**No game assets. No accounts. No internet. No secrets.** Uses only the
+Python standard library, so there is nothing to install and nothing leaves
+your machine.
 
-## Who this is for
+Built by **Dylan Asdale** for **Asdale Dynamics, LLC** (Indiana, formed
+October 2026), author of *The Massive AI Manual* and founder of
+dylanasdale.github.io. This is a fan project shared in the same clear,
+step-by-step, never-condescending style as the LLC's beginner-friendly AI
+education and practical tools.
 
-Dylan Asdale is a registered nurse turned AI author and founder of
-ASDALE DYNAMICS, LLC (Indiana, formed October 2026). His book *The Massive
-AI Manual* and hub site dylanasdale.github.io explain AI "like a friend
-would": plain English, step by step, never condescending.
+## What it does
 
-The LLC focuses on beginner-friendly AI education, books and guides, and
-practical tools it can publish or sell. This chess trainer is one of the
-fun extras — a gaming/chess tool built in the same local-first, tested,
-accessible style as the LLC's other projects.
-
-## Features
-
-- Drill square **colors**: shown a square like `e4`, answer `light` or `dark`
-- Drill **coordinates**: told a color, name a square of that color
-- **Mixed mode**: alternates between the two question types
-- Accuracy tracked per square and overall in a plain JSON file
-- Stats summary, including worst squares
-- No external dependencies — Python 3 standard library only
+- **Color drill** — you are shown a square such as `e4` and answer
+  `light` or `dark`.
+- **Coordinate drill** — you are told a color and must name *any* square of
+  that color (for example, `a1` is dark).
+- **Mixed drill** — alternates between the two question types.
+- **Accuracy tracking** — every answer is recorded per square and overall in
+  a plain `chess_stats.json` file, saved after each question so a quick
+  quit never loses your progress.
+- **Stats review** — see your overall percentage, or list the squares you
+  struggle with most.
 
 ## Requirements
 
-Python 3. No packages to install.
+Python 3 (developed on 3.13). No dependencies.
 
-## Usage
-
-Run from the project folder:
+## Quick start
 
 ```bash
-# Drill 10 mixed questions
-python chess_trainer.py drill --count 10 --mode mixed
+# 10 mixed questions (great first drill)
+python3 chess_trainer.py drill --count 10 --mode mixed
 
-# Drill colors only
-python chess_trainer.py drill --count 20 --mode color
+# 20 color-only questions
+python3 chess_trainer.py drill --count 20 --mode color
 
-# Drill coordinates only
-python chess_trainer.py drill --count 20 --mode coordinate
+# 20 coordinate-only questions ("name a dark square")
+python3 chess_trainer.py drill --count 20 --mode coordinate
 
-# Quiz mode is an alias for drill
-python chess_trainer.py quiz --count 10
+# "quiz" is a friendly alias for "drill"
+python3 chess_trainer.py quiz --count 10 --mode mixed
 
-# Show accuracy summary
-python chess_trainer.py stats
+# Review your accuracy
+python3 chess_trainer.py stats
 
-# Show the 5 squares needing the most work
-python chess_trainer.py stats --worst 5
+# Review your 5 weakest squares
+python3 chess_trainer.py stats --worst 5
 
-# Use a different stats file
-python chess_trainer.py drill --count 10 --stats-file my_chess_stats.json
-
-# Run as a module
-python -m chess_trainer drill --count 10
+# Type 'q' (or quit / exit) at any prompt to stop and save your progress
 ```
 
-Type `q` to quit a drill session at any time. Progress is saved after every
-question, so quitting early never loses your accuracy history.
-
-Stats are stored in `chess_stats.json` (or your `--stats-file` path) next to
-where you run the tool. Everything stays on your machine.
-
-## Tests
+You can also run it as a module:
 
 ```bash
-python -m unittest discover -s tests
+python3 -m chess_trainer drill --count 10 --mode color
 ```
 
-Tests cover square parsing (valid/invalid), square colors, round-trip naming,
-and JSON accuracy tracking.
+### Using a different stats file
+
+The `--stats-file` option is global, so it comes *before* the subcommand.
+
+```bash
+python3 chess_trainer.py --stats-file my_stats.json drill --count 10
+python3 chess_trainer.py --stats-file my_stats.json stats --worst 5
+```
+
+Stats files are plain JSON. The default, `chess_stats.json`, is created next
+to wherever you run the tool. It is ignored by git via `.gitignore`.
+
+## Tips for low-energy / ADHD-friendly use
+
+- Start with `--count 5` or even `--count 3` and quit any time. Progress
+  is always saved.
+- Use `--seed 1` for a repeatable sequence when you want to re-drill the
+  same squares.
+- `--mode color` keeps the cognitive load lowest; work up to `mixed`.
+- `stats --worst 5` makes review fast: just fix a handful of trouble squares
+  per session.
+
+## How accuracy is scored
+
+From White's perspective, `a1` is a dark square. For a square whose file
+index is `f` (0–7 for a–h) and rank index is `r` (0–7 for 1–8), the color is
+`light` when `(f + r)` is odd and `dark` when it is even.
+
+## Testing
+
+```bash
+python3 -m unittest discover -s tests
+```
+
+Tests cover square parsing (valid and invalid inputs, case sensitivity),
+square colors, naming round-trips across all 64 squares, full enumeration,
+and JSON accuracy tracking (records, overall accuracy, save/load round trip,
+missing-file handling).
+
+## Files
+
+| File | Purpose |
+| --- | --- |
+| `board.py` | Square parsing, naming, and light/dark color logic |
+| `stats.py` | Local JSON accuracy tracking with atomic saves |
+| `chess_trainer.py` | Command-line interface (`drill`, `quiz`, `stats`) |
+| `tests/test_board.py` | Tests for square parsing and colors |
+| `tests/test_stats.py` | Tests for JSON accuracy tracking |
+| `STATUS.md` | Build/run/verification notes |
+| `LICENSE` | MIT License |
 
 ## License
 
-MIT License. Copyright (c) 2026 Asdale Dynamics, LLC. See LICENSE.
+MIT License. Copyright (c) 2026 Asdale Dynamics, LLC. See [LICENSE](LICENSE).
 
 ## Credit
 
-Built by Dylan Asdale for **Asdale Dynamics, LLC** — Indiana, formed October
-2026. Beginner-friendly AI education, books, guides, and practical tools.
-Learn more at dylanasdale.github.io.
+Created by **Dylan Asdale** for **Asdale Dynamics, LLC**. Learn about
+beginner-friendly AI, books, and practical tools at
+[dylanasdale.github.io](https://dylanasdale.github.io) and in *The Massive
+AI Manual*.
 
-This is a fan project. Not affiliated with any chess organization.
+This is an unofficial fan project. It is not affiliated with any chess
+organization.

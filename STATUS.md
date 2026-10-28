@@ -61,13 +61,26 @@ Stats live in `chess_stats.json` (or `--stats-file`) next to the tool. Type
 
 ## Verification results
 
-- `python3 -m unittest discover -s tests`: 17 tests, OK
-- CLI smoke tests: drill (color/coordinate), stats, `--worst`, custom
-  stats file, `python -m chess_trainer` all run correctly
-- JSON stats written atomically and reloaded correctly
-- MIT LICENSE copyright line verified exactly:
-  "Copyright (c) 2026 Asdale Dynamics, LLC"
-- README credits Asdale Dynamics, LLC
+- `python3 -m py_compile board.py stats.py chess_trainer.py`: compiles cleanly
+- `python3 -m unittest discover -s tests`: 17/17 tests pass
+- CLI smoke tests pass:
+  - `drill --mode color / coordinate / mixed`
+  - `quiz` (alias)
+  - `stats` (with overall accuracy, and empty-file "n/a" case)
+  - `stats --worst 5` (correctly shows correct/total per square)
+  - `--stats-file` global option (placed before subcommand)
+  - `python -m chess_trainer` module entrypoint
+- JSON stats written atomically and reloaded correctly (save/load round trip)
+- `q` quits a drill session and saves progress; empty/EOF handled gracefully
+
+## Issues found and fixed during review
+
+- Removed an unused `import json` from `chess_trainer.py`.
+- Fixed a bug in `stats --worst`: the "squares needing the most work"
+  report printed a stale correct-count variable (`c` leaked from the
+  previous loop). Now each ranked tuple carries its own correct count.
+- Fixed the unit test `test_record_updates_square_and_total`, whose
+  expected total was off by one; corrected to the actual 3 correct / 1 wrong.
 
 ## Known gaps
 
